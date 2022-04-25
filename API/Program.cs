@@ -1,29 +1,28 @@
 using API.Extensions;
+using Infrastructure.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerExtension();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerExtension();
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.AddConfigurations();
+
+    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+
+    var app = builder.Build();
+    app.UseInfrastructure(builder.Configuration);
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex) when (!ex.GetType().Name.Equals("StopTheHostException", StringComparison.Ordinal))
+{
+    //TODO: Runs when exception occurs
+    Console.WriteLine(ex.Message);
+}
+finally
+{
+    //TODO: Always run
+}

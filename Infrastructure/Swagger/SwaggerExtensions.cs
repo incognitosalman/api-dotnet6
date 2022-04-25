@@ -1,11 +1,14 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
-namespace API.Extensions
+namespace Infrastructure.Extensions
 {
     public static class SwaggerExtensions
     {
-        public static IServiceCollection AddSwaggerExtension(this IServiceCollection services)
+        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
 
             services.AddSwaggerGen(options =>
@@ -29,14 +32,26 @@ namespace API.Extensions
                     TermsOfService = new Uri("https://github.com/salman-develop?tab=repositories")
                 });
 
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (!assembly.IsDynamic)
+                    {
+                        string xmlFile = $"{assembly.GetName().Name}.xml";
+                        string xmlPath = Path.Combine(baseDirectory, xmlFile);
+                        if (File.Exists(xmlPath))
+                        {
+                            options.IncludeXmlComments(xmlPath);
+                        }
+                    }
+                }
             });
             return services;
         }
 
-        public static IApplicationBuilder UseSwaggerExtension(this IApplicationBuilder app)
+        public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app, IConfiguration config)
         {
+            app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
                 options.DocumentTitle = "Learning API development using .NET 6";
