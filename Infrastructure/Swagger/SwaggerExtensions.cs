@@ -15,7 +15,7 @@ namespace Infrastructure.Extensions
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "API Development",
+                    Title = "RESTful API Using .NET 6",
                     Version = "v1",
                     Contact = new OpenApiContact
                     {

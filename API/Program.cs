@@ -1,28 +1,17 @@
-using API.Extensions;
-using Infrastructure.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-
-try
+namespace API
 {
-    var builder = WebApplication.CreateBuilder(args);
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
 
-    builder.Host.AddConfigurations();
-
-    builder.Services.AddInfrastructure(builder.Configuration);
-    builder.Services.AddControllers();
-    builder.Services.AddEndpointsApiExplorer();
-
-    var app = builder.Build();
-    app.UseInfrastructure(builder.Configuration);
-    app.Run();
-}
-catch (Exception ex) when (!ex.GetType().Name.Equals("StopTheHostException", StringComparison.Ordinal))
-{
-    //TODO: Runs when exception occurs
-    Console.WriteLine(ex.Message);
-}
-finally
-{
-    //TODO: Always run
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }
