@@ -1,3 +1,4 @@
+using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ namespace API
             services.AddInfrastructure(_config);
             services.AddDbContext<StoreContext>(
                 x => x.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
