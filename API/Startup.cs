@@ -1,9 +1,8 @@
 using API.Helpers;
-using Core.Interfaces;
+using API.Middlewares;
 using Infrastructure.Data;
 using Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace API
 {
@@ -20,18 +19,21 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddInfrastructure(_config);
             services.AddDbContext<StoreContext>(
                 x => x.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+           
             services.AddAutoMapper(typeof(MappingProfiles));
+
+            services.AddInfrastructure(_config);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseStatusCodePagesWithReExecute("errors/{0}");
             app.UseInfrastructure(_config);
         }
     }
