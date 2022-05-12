@@ -39,7 +39,7 @@ namespace API.Middlewares
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
                 };
-                var jsonResponse = JsonSerializer.Serialize(response);
+                var jsonResponse = JsonSerializer.Serialize(response, options);
                 await context.Response.WriteAsync(jsonResponse);
             }
         }
