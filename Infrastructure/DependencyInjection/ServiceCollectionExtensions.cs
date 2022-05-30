@@ -14,6 +14,7 @@ namespace Infrastructure.DependencyInjection
         {
             // services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IBasketRepository, BasketRepository>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddSwaggerDocumentation();
